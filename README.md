@@ -35,13 +35,47 @@ Or install through the [VS Code Marketplace](https://marketplace.visualstudio.co
 
 - `AI Buddy: Show Panel` - Opens the AI Buddy chat interface
 
-## ⚙️ Configuration
+## 🎛️ Interface Icons
 
-Configure AI Buddy through the settings panel:
+AI Buddy provides quick access to key features through intuitive icons in the top bar:
 
-- **LLM Server URL**: Set your preferred AI model server
-- **API Token**: Configure your API access
-- **Model**: Choose your preferred AI model
+### Top Bar Icons
+- ⚙️ **Settings Icon**: Opens the settings panel where you can configure your AI model preferences
+  - Location: Top-right corner of the AI Buddy panel
+  - Click to access and modify your configuration
+  - Settings are automatically saved to `~/.aibuddy`
+
+- ➕ **Add Icon**: Quick action for creating new items or starting new conversations
+  - Location: Top-right corner, next to settings
+  - Use for starting fresh interactions with AI Buddy
+
+## ⚙️ Settings Configuration
+
+AI Buddy offers comprehensive settings that are stored in `~/.aibuddy` for persistent configuration:
+
+### LLM Server Settings
+- **Server URL** 
+  - The endpoint URL for your AI model server
+  - Example: `https://api.your-llm-server.com`
+  - Required for connecting to your preferred AI service
+
+### Authentication
+- **API Token**
+  - Your authentication token for the AI service
+  - Securely stored and encrypted
+  - Required for accessing the AI model
+
+### Model Configuration
+- **Model Name**
+  - Specify which AI model to use
+  - Example: `gpt-4`, `claude-v2`, etc.
+  - Choose based on your needs and API access
+
+### Settings Management
+- Settings are automatically saved when you click "Save"
+- Stored locally in `~/.aibuddy` for privacy
+- Loaded automatically when VS Code starts
+- Can be updated any time through the settings panel
 
 ## 🛠️ Development
 
