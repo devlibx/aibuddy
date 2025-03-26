@@ -36,45 +36,21 @@ class AiBuddyViewProvider implements vscode.WebviewViewProvider {
 	}
 
 	private _getHtmlForWebview(webview: vscode.Webview) {
+		const webviewUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'webview-ui', 'dist'));
+
 		return `<!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>AI Buddy</title>
-            <style>
-                body {
-                    padding: 10px;
-                }
-                .container {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 10px;
-                }
-                button {
-                    padding: 8px;
-                    cursor: pointer;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <h2>AI Buddy Panel</h2>
-                <p>Welcome to AI Buddy! This panel will help you interact with AI features.</p>
-                <button onclick="sendMessage()">Send Test Message</button>
-            </div>
-            <script>
-                const vscode = acquireVsCodeApi();
-                
-                function sendMessage() {
-                    vscode.postMessage({
-                        type: 'info',
-                        value: 'Hello from the webview!'
-                    });
-                }
-            </script>
-        </body>
-        </html>`;
+		<html lang="en">
+			<head>
+				<meta charset="UTF-8" />
+				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+				<title>AI Buddy</title>
+				<script type="module" crossorigin src="${webviewUri}/assets/index-5uDtlWlo.js"></script>
+				<link rel="stylesheet" crossorigin href="${webviewUri}/assets/index-CcBlA6dr.css">
+			</head>
+			<body>
+				<div id="root"></div>
+			</body>
+		</html>`;
 	}
 }
 

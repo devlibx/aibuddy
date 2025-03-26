@@ -9,3 +9,7 @@ vsc-extension-quickstart.md
 src/**
 !src/**/*.d.ts
 out/test/**
+webview-ui/src/**
+webview-ui/public/**
+webview-ui/node_modules/**
+!webview-ui/dist/**
