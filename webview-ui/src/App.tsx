@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import { IconBar } from './components/IconBar';
 import { Settings } from './components/Settings';
+import { ModeToggle, Mode } from './components/ModeToggle';
 
 interface VSCodeAPI {
   postMessage<T extends { type: string }>(message: T): void;
@@ -13,6 +14,11 @@ interface AiBuddySettings {
   url: string;
   token: string;
   model: string;
+}
+
+interface AppState {
+  mode: Mode;
+  settings?: AiBuddySettings;
 }
 
 declare global {
@@ -30,6 +36,7 @@ function App() {
   const [message, setMessage] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<Page>('main');
   const [settings, setSettings] = useState<AiBuddySettings | undefined>(undefined);
+  const [mode, setMode] = useState<Mode>('PLAN_MODE');
 
   useEffect(() => {
     // Listen for messages from the extension
@@ -43,6 +50,12 @@ function App() {
     };
 
     window.addEventListener('message', messageHandler);
+
+    // Load saved mode
+    const savedState = vscode.getState() as AppState | undefined;
+    if (savedState?.mode) {
+      setMode(savedState.mode);
+    }
 
     return () => {
       window.removeEventListener('message', messageHandler);
@@ -59,6 +72,16 @@ function App() {
     }
   };
 
+  const handleModeChange = (newMode: Mode) => {
+    setMode(newMode);
+    const currentState = vscode.getState() as AppState | undefined;
+    vscode.setState({ ...currentState, mode: newMode });
+    vscode.postMessage({
+      type: 'modeChange',
+      value: newMode
+    });
+  };
+
   const handleSettingsSave = (newSettings: AiBuddySettings) => {
     vscode.postMessage({
       type: 'saveSettings',
@@ -73,7 +96,8 @@ function App() {
       {currentPage === 'main' ? (
         <>
           <div className="top-bar">
-            <div className="left-icons">
+            <div className="spacer"></div>
+            <div className="right-icons">
               <IconBar
                 onAddClick={() => {
                   vscode.postMessage({ type: 'add' });
@@ -83,19 +107,27 @@ function App() {
             </div>
           </div>
           <div className="main-content">
+            <div className="spacer"></div>
             <div className="input-container">
-              <textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Type your message here..."
-                rows={4}
-              />
-              <button
-                onClick={sendMessage}
-                disabled={!message.trim()}
-              >
-                Send Message
-              </button>
+              <div className="textarea-container">
+                <textarea
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Type your message here..."
+                  rows={4}
+                />
+                <button
+                  className="send-button"
+                  onClick={sendMessage}
+                  disabled={!message.trim()}
+                  title="Send message"
+                >
+                  ✈
+                </button>
+              </div>
+              <div className="bottom-controls">
+                <ModeToggle mode={mode} onChange={handleModeChange} />
+              </div>
             </div>
           </div>
         </>

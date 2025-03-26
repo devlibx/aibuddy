@@ -1,0 +1,41 @@
+.mode-toggle {
+    display: flex;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--vscode-input-border);
+    background-color: var(--vscode-input-background);
+    width: fit-content;
+    margin: 0;
+    transform: scale(0.8);
+    transform-origin: right center;
+}
+
+.mode-button {
+    padding: 6px 16px;
+    border: none;
+    background: none;
+    color: var(--vscode-input-foreground);
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s ease;
+    border-radius: 0;
+}
+
+.mode-button:hover {
+    background-color: var(--vscode-button-hoverBackground);
+}
+
+.mode-button.active {
+    background-color: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+}
+
+.mode-button:first-child {
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+
+.mode-button:last-child {
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+}

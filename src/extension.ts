@@ -9,10 +9,13 @@ interface AiBuddySettings {
 	model: string;
 }
 
+type Mode = 'PLAN_MODE' | 'ACT_MODE';
+
 class AiBuddyViewProvider implements vscode.WebviewViewProvider {
 	public static readonly viewType = 'aibuddy.sidebarView';
 	private _view?: vscode.WebviewView;
 	private readonly settingsPath: string;
+	private currentMode: Mode = 'PLAN_MODE';
 
 	constructor(
 		private readonly _extensionUri: vscode.Uri,
@@ -87,6 +90,10 @@ class AiBuddyViewProvider implements vscode.WebviewViewProvider {
 						vscode.window.showErrorMessage('Failed to save AI Buddy settings');
 					}
 					return;
+				case 'modeChange':
+					this.currentMode = message.value;
+					console.log(`Mode changed to: ${this.currentMode}`);
+					return;
 			}
 		});
 	}
@@ -109,6 +116,10 @@ class AiBuddyViewProvider implements vscode.WebviewViewProvider {
 				<script type="module" src="${scriptUri}"></script>
 			</body>
 		</html>`;
+	}
+
+	public getCurrentMode(): Mode {
+		return this.currentMode;
 	}
 }
 

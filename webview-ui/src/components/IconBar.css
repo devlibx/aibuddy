@@ -1,49 +1,15 @@
 .icon-bar {
     display: flex;
-    gap: 8px;
-    align-items: center;
+    gap: 1px;
 }
 
-.icon-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    min-width: 28px;
-    padding: 0;
-    background: none;
-    border: none;
-    color: var(--vscode-icon-foreground);
-    cursor: pointer;
-    border-radius: 5px;
-    opacity: 0.8;
-    transition: opacity 0.2s, background-color 0.2s;
-}
-
-.icon-button:hover {
-    background-color: var(--vscode-toolbar-hoverBackground);
-    opacity: 1;
-}
-
-.icon-button:focus {
-    outline: none;
-    opacity: 1;
-}
-
-.icon-button:focus-visible {
-    outline: 1px solid var(--vscode-focusBorder);
-    outline-offset: -1px;
-}
-
-/* Icon styles */
-.icon-add::before {
+.icon-button.icon-add::before {
     content: "+";
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 32px;
+    font-weight: 300;
 }
 
-.icon-settings::before {
+.icon-button.icon-settings::before {
     content: "⚙";
-    font-size: 16px;
+    font-size: 28px;
 }
