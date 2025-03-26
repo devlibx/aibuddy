@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import './App.css';
-import { Settings } from './components/Settings';
+import { IconBar } from './components/IconBar';
 
 interface VSCodeAPI {
   postMessage<T extends { type: string }>(message: T): void;
@@ -14,38 +14,11 @@ declare global {
   }
 }
 
-interface LLMSettings {
-  url: string;
-  token: string;
-  model: string;
-}
-
 // Get access to the VS Code API
 const vscode = window.acquireVsCodeApi();
 
 function App() {
-  const [message, setMessage] = useState('');
-  const [showSettings, setShowSettings] = useState(false);
-  const [settings, setSettings] = useState<LLMSettings | null>(null);
-
-  useEffect(() => {
-    // Load saved settings from VS Code state
-    const savedSettings = vscode.getState<LLMSettings>();
-    if (savedSettings) {
-      setSettings(savedSettings);
-    }
-  }, []);
-
-  const handleSettingsSave = (newSettings: LLMSettings) => {
-    setSettings(newSettings);
-    vscode.setState(newSettings);
-    setShowSettings(false);
-    // Notify extension about settings update
-    vscode.postMessage({
-      type: 'settings-updated',
-      value: newSettings
-    });
-  };
+  const [message, setMessage] = useState<string>('');
 
   const sendMessage = () => {
     if (message.trim()) {
@@ -61,51 +34,17 @@ function App() {
     <div className="app-container">
       <div className="top-bar">
         <div className="left-icons">
-          <button className="icon-button" title="New Chat">
-            <span className="codicon codicon-add"></span>
-          </button>
-          <button className="icon-button" title="Chat History">
-            <span className="codicon codicon-history"></span>
-          </button>
-          <button className="icon-button" title="Conversations">
-            <span className="codicon codicon-list-flat"></span>
-          </button>
-          <button className="icon-button" title="Documentation">
-            <span className="codicon codicon-book"></span>
-          </button>
-        </div>
-        <div className="right-icons">
-          <button className="icon-button" title="Share">
-            <span className="codicon codicon-link-external"></span>
-          </button>
-          <button className="icon-button" title="Account">
-            <span className="codicon codicon-account"></span>
-          </button>
-          <button
-            className="icon-button"
-            title="Settings"
-            onClick={() => setShowSettings(true)}
-          >
-            <span className="codicon codicon-gear"></span>
-          </button>
+          <IconBar
+            onAddClick={() => {
+              vscode.postMessage({ type: 'add' });
+            }}
+            onSettingsClick={() => {
+              vscode.postMessage({ type: 'settings' });
+            }}
+          />
         </div>
       </div>
-
       <div className="main-content">
-        {settings ? (
-          <div className="settings-info">
-            <p>Server: {settings.url}</p>
-            <p>Model: {settings.model}</p>
-          </div>
-        ) : (
-          <div className="no-settings">
-            <p>Please configure your LLM settings</p>
-            <button onClick={() => setShowSettings(true)}>
-              Configure Settings
-            </button>
-          </div>
-        )}
-
         <div className="input-container">
           <textarea
             value={message}
@@ -113,19 +52,14 @@ function App() {
             placeholder="Type your message here..."
             rows={4}
           />
-          <button onClick={sendMessage} disabled={!message.trim() || !settings}>
+          <button
+            onClick={sendMessage}
+            disabled={!message.trim()}
+          >
             Send Message
           </button>
         </div>
       </div>
-
-      {showSettings && (
-        <Settings
-          onSave={handleSettingsSave}
-          onClose={() => setShowSettings(false)}
-          initialSettings={settings || undefined}
-        />
-      )}
     </div>
   );
 }

@@ -32,6 +32,12 @@ class AiBuddyViewProvider implements vscode.WebviewViewProvider {
 				case 'info':
 					vscode.window.showInformationMessage(message.value);
 					return;
+				case 'add':
+					vscode.window.showInformationMessage('Add button clicked');
+					return;
+				case 'settings':
+					vscode.window.showInformationMessage('Settings button clicked');
+					return;
 				case 'settings-updated':
 					console.log('Settings updated:', message.value);
 					// Store settings in workspace state
@@ -43,19 +49,21 @@ class AiBuddyViewProvider implements vscode.WebviewViewProvider {
 	}
 
 	private _getHtmlForWebview(webview: vscode.Webview) {
-		const webviewUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'webview-ui', 'dist'));
+		const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'webview-ui', 'dist', 'assets', 'index-OiiCoLRS.js'));
+		const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'webview-ui', 'dist', 'assets', 'index-chEfXGJU.css'));
 
 		return `<!DOCTYPE html>
 		<html lang="en">
 			<head>
 				<meta charset="UTF-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} https:; style-src ${webview.cspSource}; script-src ${webview.cspSource} 'unsafe-inline';">
 				<title>AI Buddy</title>
-				<script type="module" crossorigin src="${webviewUri}/assets/index-DaMEI8FC.js"></script>
-				<link rel="stylesheet" crossorigin href="${webviewUri}/assets/index-qUcut8_d.css">
+				<link rel="stylesheet" href="${styleUri}">
 			</head>
 			<body>
 				<div id="root"></div>
+				<script type="module" src="${scriptUri}"></script>
 			</body>
 		</html>`;
 	}
