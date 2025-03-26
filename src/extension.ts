@@ -7,6 +7,7 @@ class AiBuddyViewProvider implements vscode.WebviewViewProvider {
 
 	constructor(
 		private readonly _extensionUri: vscode.Uri,
+		private readonly _extensionContext: vscode.ExtensionContext
 	) { }
 
 	public resolveWebviewView(
@@ -31,6 +32,12 @@ class AiBuddyViewProvider implements vscode.WebviewViewProvider {
 				case 'info':
 					vscode.window.showInformationMessage(message.value);
 					return;
+				case 'settings-updated':
+					console.log('Settings updated:', message.value);
+					// Store settings in workspace state
+					this._extensionContext.workspaceState.update('aibuddy.settings', message.value);
+					vscode.window.showInformationMessage('AI Buddy settings updated successfully');
+					return;
 			}
 		});
 	}
@@ -44,8 +51,8 @@ class AiBuddyViewProvider implements vscode.WebviewViewProvider {
 				<meta charset="UTF-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 				<title>AI Buddy</title>
-				<script type="module" crossorigin src="${webviewUri}/assets/index-5uDtlWlo.js"></script>
-				<link rel="stylesheet" crossorigin href="${webviewUri}/assets/index-CcBlA6dr.css">
+				<script type="module" crossorigin src="${webviewUri}/assets/index-DaMEI8FC.js"></script>
+				<link rel="stylesheet" crossorigin href="${webviewUri}/assets/index-qUcut8_d.css">
 			</head>
 			<body>
 				<div id="root"></div>
@@ -59,7 +66,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	try {
 		// Register the webview provider
-		const provider = new AiBuddyViewProvider(context.extensionUri);
+		const provider = new AiBuddyViewProvider(context.extensionUri, context);
 		const providerRegistration = vscode.window.registerWebviewViewProvider(
 			AiBuddyViewProvider.viewType,
 			provider,
