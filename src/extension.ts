@@ -1,14 +1,46 @@
 import * as vscode from 'vscode';
 import { join } from 'path';
+import * as fs from 'fs';
+import * as os from 'os';
+
+interface AiBuddySettings {
+	url: string;
+	token: string;
+	model: string;
+}
 
 class AiBuddyViewProvider implements vscode.WebviewViewProvider {
 	public static readonly viewType = 'aibuddy.sidebarView';
 	private _view?: vscode.WebviewView;
+	private readonly settingsPath: string;
 
 	constructor(
 		private readonly _extensionUri: vscode.Uri,
 		private readonly _extensionContext: vscode.ExtensionContext
-	) { }
+	) {
+		this.settingsPath = join(os.homedir(), '.aibuddy');
+	}
+
+	private loadSettings(): AiBuddySettings | undefined {
+		try {
+			if (fs.existsSync(this.settingsPath)) {
+				const data = fs.readFileSync(this.settingsPath, 'utf8');
+				return JSON.parse(data);
+			}
+		} catch (error) {
+			console.error('Error loading settings:', error);
+		}
+		return undefined;
+	}
+
+	private saveSettings(settings: AiBuddySettings): void {
+		try {
+			fs.writeFileSync(this.settingsPath, JSON.stringify(settings, null, 2));
+		} catch (error) {
+			console.error('Error saving settings:', error);
+			vscode.window.showErrorMessage('Failed to save AI Buddy settings');
+		}
+	}
 
 	public resolveWebviewView(
 		webviewView: vscode.WebviewView,
@@ -26,6 +58,15 @@ class AiBuddyViewProvider implements vscode.WebviewViewProvider {
 
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
+		// Load and send settings to webview
+		const settings = this.loadSettings();
+		if (settings) {
+			webviewView.webview.postMessage({
+				type: 'loadSettings',
+				value: settings
+			});
+		}
+
 		// Handle messages from the webview
 		webviewView.webview.onDidReceiveMessage(message => {
 			switch (message.type) {
@@ -38,11 +79,13 @@ class AiBuddyViewProvider implements vscode.WebviewViewProvider {
 				case 'settings':
 					vscode.window.showInformationMessage('Settings button clicked');
 					return;
-				case 'settings-updated':
-					console.log('Settings updated:', message.value);
-					// Store settings in workspace state
-					this._extensionContext.workspaceState.update('aibuddy.settings', message.value);
-					vscode.window.showInformationMessage('AI Buddy settings updated successfully');
+				case 'saveSettings':
+					try {
+						this.saveSettings(message.value);
+						vscode.window.showInformationMessage('AI Buddy settings saved successfully');
+					} catch (error) {
+						vscode.window.showErrorMessage('Failed to save AI Buddy settings');
+					}
 					return;
 			}
 		});
