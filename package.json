@@ -1,0 +1,63 @@
+{
+  "name": "aibuddy",
+  "displayName": "AiBuddy",
+  "description": "This is a AI buddfy to help code",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.98.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onView:aibuddy.sidebarView",
+    "onCommand:aibuddy.showPanel",
+    "*"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "aibuddy.showPanel",
+        "title": "Show AI Buddy Panel"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "aibuddy-sidebar",
+          "title": "AI Buddy",
+          "icon": "$(beaker)"
+        }
+      ]
+    },
+    "views": {
+      "aibuddy-sidebar": [
+        {
+          "type": "webview",
+          "id": "aibuddy.sidebarView",
+          "name": "AI Buddy"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.98.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@typescript-eslint/eslint-plugin": "^8.28.0",
+    "@typescript-eslint/parser": "^8.28.0",
+    "eslint": "^9.23.0",
+    "typescript": "^5.8.2",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1"
+  }
+}
