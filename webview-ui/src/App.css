@@ -100,29 +100,38 @@ body {
 .textarea-container {
   position: relative;
   width: 100%;
+  display: flex;
 }
 
 textarea {
   width: 100%;
   padding: 8px;
-  padding-right: 50px;
+  padding-right: 36px;
   border: 1px solid var(--vscode-input-border);
   background-color: var(--vscode-input-background);
   color: var(--vscode-input-foreground);
   border-radius: 4px;
-  resize: vertical;
+  resize: none;
   font-family: var(--vscode-font-family);
-  min-height: 100px;
-  height: 120px;
+  min-height: 32px;
+  max-height: 200px;
+  height: auto;
+  overflow-y: hidden;
+  line-height: 16px;
+  font-size: 13px;
+}
+
+.send-button-container {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  pointer-events: none;
 }
 
 .send-button {
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
   padding: 0;
   border: none;
   background-color: var(--vscode-button-background);
@@ -132,15 +141,16 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 14px;
   transform: rotate(45deg);
   transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  pointer-events: auto;
 }
 
 .send-button:hover:not(:disabled) {
   transform: rotate(45deg) scale(1.1);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .send-button:disabled {
@@ -151,9 +161,46 @@ textarea {
 
 .bottom-controls {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   padding: 0;
+}
+
+.left-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transform: scale(0.7);
+  transform-origin: left center;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  padding: 0;
+  border: none;
+  background-color: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+.action-button:hover {
+  background-color: var(--vscode-button-hoverBackground);
+}
+
+.model-name {
+  color: var(--vscode-input-foreground);
+  font-size: 12px;
+  opacity: 0.8;
+  margin-left: 4px;
+  white-space: nowrap;
 }
 
 .spacer {

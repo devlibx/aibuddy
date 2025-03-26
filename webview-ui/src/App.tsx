@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './App.css';
 import { IconBar } from './components/IconBar';
 import { Settings } from './components/Settings';
@@ -37,6 +37,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState<Page>('main');
   const [settings, setSettings] = useState<AiBuddySettings | undefined>(undefined);
   const [mode, setMode] = useState<Mode>('PLAN_MODE');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     // Listen for messages from the extension
@@ -62,6 +63,19 @@ function App() {
     };
   }, []);
 
+  const adjustTextareaHeight = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = `${Math.min(textarea.scrollHeight, 200)}px`;
+    }
+  };
+
+  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setMessage(e.target.value);
+    adjustTextareaHeight();
+  };
+
   const sendMessage = () => {
     if (message.trim()) {
       vscode.postMessage({
@@ -69,6 +83,9 @@ function App() {
         value: message
       });
       setMessage('');
+      if (textareaRef.current) {
+        textareaRef.current.style.height = '32px';
+      }
     }
   };
 
@@ -91,6 +108,14 @@ function App() {
     setCurrentPage('main');
   };
 
+  // Handle keyboard shortcuts
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
   return (
     <div className="app-container">
       {currentPage === 'main' ? (
@@ -111,21 +136,30 @@ function App() {
             <div className="input-container">
               <div className="textarea-container">
                 <textarea
+                  ref={textareaRef}
                   value={message}
-                  onChange={(e) => setMessage(e.target.value)}
+                  onChange={handleTextareaChange}
+                  onKeyDown={handleKeyDown}
                   placeholder="Type your message here..."
-                  rows={4}
+                  rows={1}
                 />
-                <button
-                  className="send-button"
-                  onClick={sendMessage}
-                  disabled={!message.trim()}
-                  title="Send message"
-                >
-                  ✈
-                </button>
+                <div className="send-button-container">
+                  <button
+                    className="send-button"
+                    onClick={sendMessage}
+                    disabled={!message.trim()}
+                    title="Send message"
+                  >
+                    ✈
+                  </button>
+                </div>
               </div>
               <div className="bottom-controls">
+                <div className="left-controls">
+                  <button className="action-button" title="Mention">@</button>
+                  <button className="action-button" title="Camera">📷</button>
+                  <span className="model-name">{settings?.model || 'No model selected'}</span>
+                </div>
                 <ModeToggle mode={mode} onChange={handleModeChange} />
               </div>
             </div>
